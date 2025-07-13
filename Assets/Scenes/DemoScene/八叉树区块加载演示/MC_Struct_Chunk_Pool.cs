@@ -32,7 +32,7 @@ namespace MC_Test
             chunkPrefab = chunkPrefeb;
             poolRoot = root;
 
-            poolSize = renderRange * renderRange * 8;
+            poolSize = renderRange * renderRange * renderRange * 8;
             for (int i = 0; i < poolSize; i++)
             {
                 GameObject chunk = Instantiate(chunkPrefab, poolRoot);
@@ -49,7 +49,7 @@ namespace MC_Test
         {
             if (activeChunks.ContainsKey(chunkCoord))
             {
-                Debug.LogWarning($"Chunk {chunkCoord} ÒÑ×¢²á£¬ÖØ¸´×¢²á±»ºöÂÔ");
+                //Debug.LogWarning($"Chunk {chunkCoord} ÒÑ×¢²á£¬ÖØ¸´×¢²á±»ºöÂÔ");
                 return activeChunks[chunkCoord];
             }
 

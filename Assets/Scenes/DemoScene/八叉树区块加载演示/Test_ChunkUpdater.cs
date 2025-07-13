@@ -1,6 +1,8 @@
 ﻿using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts;
+using System.Net;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -13,11 +15,22 @@ namespace MC_Test
 
         [Foldout("引用", true)]
         public Camera cam;
+        public Transform centreTarget; // 可选绑定 player
+
 
         [Foldout("对象池", true)]
         public GameObject PoolRoot;
         public GameObject chunkPrefeb;
         [Header("渲染半径")] public int RenderRange;
+
+
+        private Vector3 lastCameraPos;
+        private Quaternion lastCameraRot;
+        private const float positionThreshold = 0.01f;
+        private const float rotationThreshold = 0.1f; // 用角度差比较
+
+        private HashSet<Vector3Int> currentVisibleChunks = new HashSet<Vector3Int>();
+        private HashSet<Vector3Int> lastVisibleChunks = new HashSet<Vector3Int>();
 
 
         #endregion
@@ -28,18 +41,15 @@ namespace MC_Test
         private void Start()
         {
             MC_Struct_Chunk_Pool.Instance.InitPool(RenderRange, chunkPrefeb, PoolRoot.transform);
+            lastCameraPos = cam.transform.position;
+            lastCameraRot = cam.transform.rotation;
 
-            List<Vector3Int> list = GetChunkCoordsInRange(cam, Vector3.zero, RenderRange, new Vector3(16,16,16));
-
-            foreach (var pos in list)
-            {
-                MC_Struct_Chunk_Pool.Instance.RegisterChunk(pos);
-            }
+            UpdateToRigisterChunk(); 
         }
 
         private void Update()
         {
-            ReferUpdate_CheckPlayerDistance();
+            ReferUpdate_DynamicChunks();
         }
 
         #endregion
@@ -47,15 +57,28 @@ namespace MC_Test
 
         #region 区块更新
 
-        void ReferUpdate_CheckPlayerDistance()
+        void ReferUpdate_DynamicChunks()
         {
-            
+            if (!isPlayerMoving())
+                return;
+
+            UpdateToRigisterChunk(); // 包含了注册 + 卸载逻辑
         }
 
-        void OnPlayerMovedEnough()
+        bool isPlayerMoving()
         {
+            float posDelta = (cam.transform.position - lastCameraPos).sqrMagnitude;
+            float rotDelta = Quaternion.Angle(cam.transform.rotation, lastCameraRot);
 
+            if (posDelta > positionThreshold * positionThreshold || rotDelta > rotationThreshold)
+            {
+                lastCameraPos = cam.transform.position;
+                lastCameraRot = cam.transform.rotation;
+                return true;
+            }
+            return false;
         }
+
 
         #endregion
 
@@ -69,30 +92,53 @@ namespace MC_Test
 
         void UpdateToRigisterChunk()
         {
+            currentVisibleChunks.Clear();
 
+            Vector3Int centerCoord = WorldToChunkCoord(centreTarget.position, new Vector3(16, 16, 16));
+
+            foreach (var coord in GetNewChunkCoordsInRange(cam, centreTarget.position, RenderRange, new Vector3(16, 16, 16)))
+                currentVisibleChunks.Add(coord);
+
+            // 注册新 Chunk
+            foreach (var pos in currentVisibleChunks)
+            {
+                if (!lastVisibleChunks.Contains(pos))
+                {
+                    MC_Struct_Chunk_Pool.Instance.RegisterChunk(pos);
+                }
+            }
+
+            // 注销旧 Chunk：只移除“距离太远”的
+            foreach (var oldPos in lastVisibleChunks)
+            {
+                if (!currentVisibleChunks.Contains(oldPos))
+                {
+                    int dx = Mathf.Abs(oldPos.x - centerCoord.x);
+                    int dy = Mathf.Abs(oldPos.y - centerCoord.y);
+                    int dz = Mathf.Abs(oldPos.z - centerCoord.z);
+
+                    if (dx > RenderRange || dy > RenderRange || dz > RenderRange)
+                    {
+                        MC_Struct_Chunk_Pool.Instance.UnregisterChunk(oldPos);
+                    }
+                }
+            }
+
+            // 交换引用（或者复制）
+            var temp = lastVisibleChunks;
+            lastVisibleChunks = currentVisibleChunks;
+            currentVisibleChunks = temp;
         }
 
-        void UpdateToUnRigisterChunk()
-        {
-
-        }
-
-        void RegisterOneChunk(Vector3Int chunkCoord)
-        {
-            
-        }
-
-        void UnRegisterOneChunk(Vector3Int chunkCoord)
-        {
-            MC_Struct_Chunk_Pool.Instance.UnregisterChunk(chunkCoord);
-        }
-
-        #endregion
-
-
-        #region 工具
-
-        List<Vector3Int> GetChunkCoordsInRange(Camera cam, Vector3 centre, int renderRange, Vector3 chunkSize)
+        /// <summary>
+        /// 获取可生成的区块的坐标
+        /// </summary>
+        /// <param name="cam"></param>
+        /// <param name="centre"></param>
+        /// <param name="renderRange"></param>
+        /// <param name="chunkSize"></param>
+        /// <returns></returns>
+        List<Vector3Int> GetNewChunkCoordsInRange(Camera cam, Vector3 centre, int renderRange, Vector3 chunkSize)
         {
             List<Vector3Int> result = new List<Vector3Int>();
 
@@ -130,6 +176,11 @@ namespace MC_Test
 
             return result;
         }
+
+        #endregion
+
+
+        #region 工具
 
 
         /// <summary>

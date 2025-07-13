@@ -153,37 +153,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 1711154101}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &592052779
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 592052780}
-  m_Layer: 0
-  m_Name: Chunks
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &592052780
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 592052779}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 1711154101}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &674194596
 GameObject:
   m_ObjectHideFlags: 0
@@ -270,7 +239,7 @@ Transform:
   m_GameObject: {fileID: 674194596}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 10, z: -10}
+  m_LocalPosition: {x: 0, y: 18, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -429,12 +398,11 @@ Transform:
   m_GameObject: {fileID: 1711154100}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 5.5972347, y: 9.754578, z: 8.376379}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 238924771}
-  - {fileID: 592052780}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &1711154102
@@ -450,8 +418,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 674194598}
+  centreTarget: {fileID: 674194599}
   PoolRoot: {fileID: 238924770}
-  chunkPrefeb: {fileID: 8525388060977182913, guid: d4a2d1325c7a6fa4b8af001decfc5fc1, type: 3}
+  chunkPrefeb: {fileID: 8637188939721344450, guid: d4a2d1325c7a6fa4b8af001decfc5fc1, type: 3}
   RenderRange: 8
 --- !u!114 &1711154103
 MonoBehaviour:
