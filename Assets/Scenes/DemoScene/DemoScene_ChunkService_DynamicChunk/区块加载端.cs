@@ -5,6 +5,9 @@ using UnityEngine;
 public class 区块加载端 : MonoBehaviour
 {
     public 区块数据端 数据端;
+    public 区块对象池预加载器 _区块对象池预加载器;
+    public Mesh对象池预加载器 _Mesh对象池预加载器;
+    public bool Toggle = true;
 
     private void Start()
     {
@@ -13,7 +16,16 @@ public class 区块加载端 : MonoBehaviour
 
     private void Update()
     {
-        //Service_DynamicChunkLoad();
+        //if (_区块对象池预加载器.isFinishWarmup && _Mesh对象池预加载器.isFinishWarmup)
+        //{
+        //    if (Toggle)
+        //    {
+        //        Service_DynamicChunkLoad();
+        //        Toggle = false;
+        //    }
+        //}
+
+        Service_DynamicChunkLoad();
     }
 
     private void Service_DynamicChunkLoad()
@@ -30,8 +42,10 @@ public class 区块加载端 : MonoBehaviour
         {
             区块 chunk = 区块对象池.Get(logicPos, 数据端);
             数据端.AllChunks.Add(logicPos, chunk);
-            Debug.Log($"[区块加载端] 区块 {logicPos} 已添加到 AllChunks");
+            //Debug.Log($"[区块加载端] 区块 {logicPos} 已添加到 AllChunks");
         }
+
+        Debug.Log($"渲染半径为[{区块全局设置.渲染半径}]的首次加载区块数量为[{chunksToGenerate.Count}]");
 
         // 此处保留清理远距离区块的空间，可在后续添加
         // ...

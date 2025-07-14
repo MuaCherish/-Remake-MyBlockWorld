@@ -1,3 +1,4 @@
+using Homebrew;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,15 +15,22 @@ public class 区块数据端 : MonoBehaviour
     public Transform Player;
     public 距离排序表 ComputeReadyChunks;
 
-    //在视野中的区块数据结构
-    //涉及操作有先进先出
-    //public Queue<Vector3Int> VisibleChunksQueue;
+    [Foldout("调试",true)]
+    public int 所有区块数量;
+
 
     private void Awake()
     {
         ComputeReadyChunks = new 距离排序表(Player);
         AllChunks = new Dictionary<Vector3Int, 区块>();
     }
+
+    
+    private void Update()
+    {
+        所有区块数量 = AllChunks.Count;
+    }
+
 
     void OnDrawGizmos()
     {

@@ -33,11 +33,15 @@ public static class 区块对象池
     /// </summary>
     public static void Recycle(区块 chunk)
     {
-        // 如果 chunk.mesh 有大量数据，也可以选择清除 mesh
-        chunk.chunkMesh = null;
-        chunk.matrix = Matrix4x4.identity;
+        if (chunk.chunkMesh != null)
+        {
+            Mesh对象池.Recycle(chunk.chunkMesh); // 不 destroy，回收！
+            chunk.chunkMesh = null;
+        }
 
-        // 注意：不要清空 myLogicPos（视逻辑需求）
+        chunk.matrix = Matrix4x4.identity;
         pool.Push(chunk);
     }
+
+
 }

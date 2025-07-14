@@ -21,7 +21,11 @@ public class 区块
 
     public void Caculate()
     {
-        chunkMesh = BuildUnitCubeMesh(); // 只生成一次也可以做成静态缓存
+        //chunkMesh = BuildUnitCubeMesh(); // 只生成一次也可以做成静态缓存
+        chunkMesh = Mesh对象池.Get();
+        BuildUnitCubeMesh(chunkMesh); // 把 mesh 数据写入这个可复用的 mesh
+
+
         Vector3 worldPos = 常用数学计算.LogicToWorld(myLogicPos);
         Vector3 scale = 区块全局设置.区块大小;
         matrix = Matrix4x4.TRS(worldPos, Quaternion.identity, scale);
@@ -30,9 +34,9 @@ public class 区块
     /// <summary>
     /// 构建一个单位立方体（1x1x1）的 Mesh
     /// </summary>
-    private Mesh BuildUnitCubeMesh()
+    private Mesh BuildUnitCubeMesh(Mesh mesh)
     {
-        Mesh mesh = new Mesh();
+    
         mesh.name = $"UnitCube_{myLogicPos}";
 
         Vector3[] vertices = new Vector3[8]
