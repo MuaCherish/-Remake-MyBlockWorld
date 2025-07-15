@@ -4,12 +4,14 @@ using UnityEngine;
 
 namespace DemoScene_ChunkService_DynamicChunk
 {
+    /// <summary>
+    /// 暴露给外部的区块逻辑坐标限制规则
+    /// </summary>
     public interface IChunkSpawnRule
     {
         // 是否允许在指定逻辑坐标生成区块
         bool IsValid(Vector3Int logicPos);
     }
-
 
     public class 区块加载端 : MonoBehaviour
     {
@@ -18,18 +20,14 @@ namespace DemoScene_ChunkService_DynamicChunk
         public Mesh对象池预加载器 _Mesh对象池预加载器;
         public IChunkSpawnRule 生成规则; // 可以在外部赋值
 
-        //public bool Toggle = true;
-
-        private void Start()
-        {
-            //Service_DynamicChunkLoad();
-        }
-
         private void Update()
         {
             Service_DynamicChunkLoad();
         }
 
+        /// <summary>
+        /// 动态加载区块
+        /// </summary>
         private void Service_DynamicChunkLoad()
         {
             if (!_区块对象池预加载器.isFinishWarmup || !_Mesh对象池预加载器.isFinishWarmup)
@@ -52,8 +50,8 @@ namespace DemoScene_ChunkService_DynamicChunk
 
             //Debug.Log($"渲染半径为[{区块全局设置.渲染半径}]的首次加载区块数量为[{chunksToGenerate.Count}]");
 
-            // 此处保留清理远距离区块的空间，可在后续添加
-            // ...
+            // 此处保留清理远距离区块的空间
+            // 遍历allchunks，区块的逻辑坐标与玩家的逻辑坐标的距离如果大于渲染半径则卸载区块
         }
 
         /// <summary>

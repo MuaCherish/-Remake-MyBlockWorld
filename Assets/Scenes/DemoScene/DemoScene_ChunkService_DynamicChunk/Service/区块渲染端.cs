@@ -5,7 +5,8 @@ namespace DemoScene_ChunkService_DynamicChunk
     public class 区块渲染端 : MonoBehaviour
     {
         public 区块数据端 数据端;
-
+        [ReadOnly] public int 渲染的区块数;
+        [ReadOnly] public int 实时面数;
         private Plane[] 视锥体平面;
 
         private void Update()
@@ -21,6 +22,8 @@ namespace DemoScene_ChunkService_DynamicChunk
 
         void RenderChunk()
         {
+            渲染的区块数 = 0; int temp = 0;
+
             foreach (var kvp in 数据端.AllChunks)
             {
                 区块 chunk = kvp.Value;
@@ -37,8 +40,12 @@ namespace DemoScene_ChunkService_DynamicChunk
                 {
                     // 调用DrawMesh绘制
                     Graphics.DrawMesh(chunk.渲染数据.chunkMesh, chunk.渲染数据.matrix, chunk.渲染数据.chunkMaterial, 0, 数据端.Player_Camera);
+                    temp++;
                 }
             }
+
+            渲染的区块数 = temp;
+            实时面数 = 渲染的区块数 * 12; 
         }
     }
 

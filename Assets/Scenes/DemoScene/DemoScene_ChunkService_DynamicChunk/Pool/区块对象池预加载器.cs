@@ -14,7 +14,7 @@ namespace DemoScene_ChunkService_DynamicChunk
         private void Start()
         {
             StartCoroutine(预加载协程());
-        }
+        } 
 
         private IEnumerator 预加载协程()
         {
