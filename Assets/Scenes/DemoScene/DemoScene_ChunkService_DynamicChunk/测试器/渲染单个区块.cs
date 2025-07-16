@@ -7,13 +7,13 @@ namespace DemoScene_ChunkService_DynamicChunk
     {
         public 区块数据端 数据端;
 
-        private 区块 chunk;
+        private 可面剔除的无数据区块 chunk;
 
         private void Start()
         {
             Vector3Int pos = Vector3Int.zero;
 
-            chunk = new 区块(pos, 数据端);
+            chunk = new 可面剔除的无数据区块(pos, 数据端);
         }
 
         private void OnRenderObject()

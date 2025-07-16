@@ -5,14 +5,14 @@ namespace DemoScene_ChunkService_DynamicChunk
 {
     public static class 区块对象池
     {
-        private static Stack<区块> pool = new Stack<区块>();
+        private static Stack<可面剔除的无数据区块> pool = new Stack<可面剔除的无数据区块>();
 
         /// <summary>
         /// 从池中取出一个区块，如果没有则创建一个新的
         /// </summary>
-        public static 区块 Get(Vector3Int logicPos, 区块数据端 数据端)
+        public static 可面剔除的无数据区块 Get(Vector3Int logicPos, 区块数据端 数据端)
         {
-            区块 chunk;
+            可面剔除的无数据区块 chunk;
 
             if (pool.Count > 0)
             {
@@ -23,7 +23,7 @@ namespace DemoScene_ChunkService_DynamicChunk
             }
             else
             {
-                chunk = new 区块(logicPos, 数据端);
+                chunk = new 可面剔除的无数据区块(logicPos, 数据端);
             }
 
             return chunk;
@@ -32,7 +32,7 @@ namespace DemoScene_ChunkService_DynamicChunk
         /// <summary>
         /// 回收区块对象以备复用
         /// </summary>
-        public static void Recycle(区块 chunk)
+        public static void Recycle(可面剔除的无数据区块 chunk)
         {
             if (chunk.渲染数据.chunkMesh != null)
             {

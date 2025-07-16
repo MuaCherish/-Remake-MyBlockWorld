@@ -1,140 +1,152 @@
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DemoScene_ChunkService_DynamicChunk
 {
     /// <summary>
-    /// 优先级字典：支持 O(1) 坐标查询 + 按优先级排序迭代。
+    /// 优先级字典：用于高效管理大量区块数据，支持快速坐标查找、批量增删和按玩家距离排序。
+    /// 
+    /// 核心技术点：
+    /// - 使用 Dictionary 实现 O(1) 的逻辑坐标查找和去重，提升访问效率。
+    /// - 利用对象池（区块对象池）复用区块实例，避免频繁分配和释放内存，优化性能和GC压力。
+    /// - 维护排序缓存，避免每帧重复排序；通过外部调用统一触发排序更新，提升调用效率。
+    /// - 基于玩家当前位置的逻辑坐标，对区块进行平方距离排序，避免开方计算，提升计算效率。
+    /// - 提供批量添加、删除接口，支持区块范围的自动清理，保证内存占用的合理性。
     /// </summary>
+
+    /// </summary>
+
     public class 优先级字典
     {
-        /// <summary>
-        /// 内部条目：记录区块、逻辑坐标、优先级。
-        /// </summary>
-        public class Entry
-        {
-            public Vector3Int logicPos;
-            public 区块 chunk;
-            public float priority;
+        private Transform PlayerTransform;
+        private Dictionary<Vector3Int, 可面剔除的无数据区块> chunkMap = new();
+        private 区块数据端 数据端;
+        public int Count => chunkMap.Count;
 
-            public Entry(Vector3Int pos, 区块 chunk, float priority)
-            {
-                this.logicPos = pos;
-                this.chunk = chunk;
-                this.priority = priority;
-            }
-        }
 
-        // 逻辑坐标 → 区块条目的快速查找字典
-        private readonly Dictionary<Vector3Int, Entry> dict = new();
-
-        // 按优先级排序的条目集合（SortedSet）
-        private readonly SortedSet<Entry> sortedSet;
+        // 排序缓存
+        private List<Vector3Int> sortedChunkKeysCache = new();
 
         /// <summary>
-        /// 比较器：用于根据优先级对条目排序。
-        /// 若优先级相等，则使用逻辑坐标的哈希值打散。
+        /// 初始化
         /// </summary>
-        private class EntryComparer : IComparer<Entry>
+        /// <param name="playerTransform"></param>
+        /// <param name="数据端"></param>
+        public 优先级字典(Transform playerTransform, 区块数据端 数据端)
         {
-            public int Compare(Entry a, Entry b)
-            {
-                int cmp = a.priority.CompareTo(b.priority);
-                if (cmp == 0)
-                    cmp = a.logicPos.GetHashCode().CompareTo(b.logicPos.GetHashCode());
-                return cmp;
-            }
+            PlayerTransform = playerTransform;
+            this.数据端 = 数据端;
         }
 
         /// <summary>
-        /// 构造函数：初始化排序集合。
+        /// 批量添加区块坐标，在内部通过对象池构建区块，并更新排序缓存
         /// </summary>
-        public 优先级字典()
+        public void AddRange(List<Vector3Int> logicPosList)
         {
-            sortedSet = new SortedSet<Entry>(new EntryComparer());
-        }
+            if (logicPosList == null || logicPosList.Count == 0)
+                return;
 
-        /// <summary>
-        /// 添加或更新一个区块条目。
-        /// 若已存在该坐标，则更新其区块和优先级；否则新建。
-        /// </summary>
-        /// <param name="pos">逻辑坐标</param>
-        /// <param name="chunk">区块实例</param>
-        /// <param name="priority">优先级值</param>
-        public void AddOrUpdate(Vector3Int pos, 区块 chunk, float priority)
-        {
-            if (dict.TryGetValue(pos, out var existing))
+            foreach (var pos in logicPosList)
             {
-                sortedSet.Remove(existing);
-                existing.chunk = chunk;
-                existing.priority = priority;
-                sortedSet.Add(existing);
-            }
-            else
-            {
-                var entry = new Entry(pos, chunk, priority);
-                dict[pos] = entry;
-                sortedSet.Add(entry);
+                if (!chunkMap.ContainsKey(pos))
+                {
+                    var chunk = 区块对象池.Get(pos, 数据端);
+                    chunkMap[pos] = chunk;
+                }
             }
         }
 
         /// <summary>
-        /// 移除指定逻辑坐标对应的条目。
+        /// 批量移除区块
         /// </summary>
-        /// <param name="pos">逻辑坐标</param>
-        /// <returns>是否成功移除</returns>
-        public bool Remove(Vector3Int pos)
+        public void Remove(List<Vector3Int> logicPosList)
         {
-            if (dict.TryGetValue(pos, out var entry))
+            foreach (var pos in logicPosList)
             {
-                sortedSet.Remove(entry);
-                dict.Remove(pos);
-                return true;
+                if (chunkMap.TryGetValue(pos, out var chunk))
+                {
+                    区块对象池.Recycle(chunk); // ✅ 回收整个区块对象（内部自动回收 mesh）
+                    chunkMap.Remove(pos);
+                }
             }
-            return false;
         }
 
         /// <summary>
-        /// 根据逻辑坐标获取区块。
+        /// 判断是否包含指定逻辑坐标
         /// </summary>
-        /// <param name="pos">逻辑坐标</param>
-        /// <returns>对应的区块，或 null</returns>
-        public 区块 GetChunk(Vector3Int pos)
+        public bool Contains(Vector3Int logicPos)
         {
-            return dict.TryGetValue(pos, out var entry) ? entry.chunk : null;
+            return chunkMap.ContainsKey(logicPos);
         }
 
         /// <summary>
-        /// 判断是否包含指定坐标的条目。
+        /// 直接返回排序缓存，不再做排序
         /// </summary>
-        /// <param name="pos">逻辑坐标</param>
-        /// <returns>是否存在</returns>
-        public bool Contains(Vector3Int pos)
+        public List<Vector3Int> GetChunksSortedByDistance()
         {
-            return dict.ContainsKey(pos);
+            return sortedChunkKeysCache;
         }
 
         /// <summary>
-        /// 清空所有条目。
+        /// 更新排序缓存，按玩家逻辑坐标排序
         /// </summary>
-        public void Clear()
+        public void UpdateSortedCache()
         {
-            dict.Clear();
-            sortedSet.Clear();
+            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(PlayerTransform.position);
+
+            sortedChunkKeysCache = chunkMap.Keys
+                .OrderBy(pos => (pos - playerLogicPos).sqrMagnitude)
+                .ToList();
         }
 
         /// <summary>
-        /// 获取按优先级排序的条目集合（只读遍历）。
+        /// 获取所有区块（未排序）
         /// </summary>
-        /// <returns>按优先级从低到高排序的枚举器</returns>
-        public IEnumerable<Entry> GetChunksByPriority()
+        public IEnumerable<KeyValuePair<Vector3Int, 可面剔除的无数据区块>> GetAllChunks()
         {
-            return sortedSet;
+            return chunkMap;
         }
 
         /// <summary>
-        /// 当前已存储的条目数量。
+        /// 清理所有距离玩家超过渲染半径的区块，自动卸载
         /// </summary>
-        public int Count => dict.Count;
+        public void RemoveChunksBeyondRange()
+        {
+            if (chunkMap.Count == 0)
+                return;
+
+            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(PlayerTransform.position);
+            int renderRange = 区块全局设置.渲染半径;
+
+            List<Vector3Int> chunksToRemove = new();
+
+            // 遍历所有区块逻辑坐标，筛选超过范围的
+            foreach (var kvp in chunkMap)
+            {
+                Vector3Int pos = kvp.Key;
+                if (Vector3Int.Distance(pos, playerLogicPos) > renderRange)
+                {
+                    chunksToRemove.Add(pos);
+                }
+            }
+
+            if (chunksToRemove.Count > 0)
+            {
+                Remove(chunksToRemove);
+            }
+        }
+
+        /// <summary>
+        /// 获取区块
+        /// </summary>
+        /// <param name="logicPos"></param>
+        /// <param name="chunk"></param>
+        /// <returns></returns>
+        public bool TryGetChunk(Vector3Int logicPos, out 可面剔除的无数据区块 chunk)
+        {
+            return chunkMap.TryGetValue(logicPos, out chunk);
+        }
+
     }
 }

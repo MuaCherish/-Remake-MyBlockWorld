@@ -3,19 +3,27 @@ using UnityEngine;
 namespace DemoScene_ChunkService_DynamicChunk
 {
    
-    public class 区块
+    public class 可面剔除的无数据区块
     {
         public Vector3Int myLogicPos;
         public 区块渲染数据 渲染数据 = new 区块渲染数据();
 
-        public 区块(Vector3Int logicPos, 区块数据端 数据端)
+        /// <summary>
+        /// 构造函数
+        /// </summary>
+        /// <param name="logicPos"></param>
+        /// <param name="数据端"></param>
+        public 可面剔除的无数据区块(Vector3Int logicPos, 区块数据端 数据端)
         {
             myLogicPos = logicPos;
             渲染数据.chunkMaterial = 数据端.Mat_Chunk;
 
             Caculate();
-        }
+        } 
 
+        /// <summary>
+        /// 开始计算
+        /// </summary>
         public void Caculate()
         {
             //chunkMesh = BuildUnitCubeMesh(); // 只生成一次也可以做成静态缓存
@@ -74,6 +82,8 @@ namespace DemoScene_ChunkService_DynamicChunk
 
             return mesh;
         }
+
+
     }
 
 }

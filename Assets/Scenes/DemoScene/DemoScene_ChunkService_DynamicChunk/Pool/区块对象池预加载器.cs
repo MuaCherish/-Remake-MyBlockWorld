@@ -24,7 +24,7 @@ namespace DemoScene_ChunkService_DynamicChunk
             for (int i = 0; i < 预加载数量; i++)
             {
                 Vector3Int fakePos = new Vector3Int(i, 0, 0); // 虚构逻辑坐标，不用加到 AllChunks
-                区块 chunk = new 区块(fakePos, 数据端);
+                可面剔除的无数据区块 chunk = new 可面剔除的无数据区块(fakePos, 数据端);
                 区块对象池.Recycle(chunk); // 丢进池子备用
 
                 if (i % 每帧预加载数据量 == 0)
