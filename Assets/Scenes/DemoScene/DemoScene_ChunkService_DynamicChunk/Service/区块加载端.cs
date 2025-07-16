@@ -56,7 +56,8 @@ namespace DemoScene_ChunkService_DynamicChunk
             数据端.AllChunks.AddRange(chunksToGenerate);
             数据端.AllChunks.RemoveChunksBeyondRange();
             数据端.AllChunks.UpdateSortedCache();
-            //Debug.Log($"渲染半径为[{区块全局设置.渲染半径}]的首次加载区块数量为[{chunksToGenerate.Count}]");
+            
+            //Debug.Log($"渲染半径为[{数据端.区块全局数据.渲染半径}]的首次加载区块数量为[{chunksToGenerate.Count}]");
 
             // 此处保留清理远距离区块的空间
             // 你可以使用 AllChunks.GetAllChunks() 遍历所有区块来检测远距离区块，调用 Remove 卸载
@@ -71,20 +72,25 @@ namespace DemoScene_ChunkService_DynamicChunk
             List<Vector3Int> result = new List<Vector3Int>();
 
             Vector3 playerWorldPos = 数据端.Player_Transform.position;
-            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(playerWorldPos);
+            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(数据端.区块全局数据, playerWorldPos);
 
-            int range = 区块全局设置.渲染半径;
+            int range = 数据端.区块全局数据.渲染半径;
+
+            // 限定 Y 方向在上下 3 层（共 7 层）
+            int yMin = playerLogicPos.y - 3;
+            int yMax = playerLogicPos.y + 3;
 
             for (int x = -range; x <= range; x++)
             {
-                for (int y = -range; y <= range; y++)
+                for (int y = yMin - playerLogicPos.y; y <= yMax - playerLogicPos.y; y++)
                 {
                     for (int z = -range; z <= range; z++)
                     {
                         Vector3Int logicPos = playerLogicPos + new Vector3Int(x, y, z);
+
                         if (!数据端.AllChunks.Contains(logicPos))
                         {
-                            // 欧几里得距离限制
+                            // 正常欧几里得距离判断
                             if ((logicPos - playerLogicPos).magnitude <= range)
                             {
                                 if (生成规则 == null || 生成规则.IsValid(logicPos))
@@ -99,6 +105,7 @@ namespace DemoScene_ChunkService_DynamicChunk
 
             return result;
         }
+
 
         /// <summary>
         /// 是否预热完成

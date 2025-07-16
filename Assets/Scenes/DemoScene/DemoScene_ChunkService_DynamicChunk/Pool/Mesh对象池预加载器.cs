@@ -5,6 +5,7 @@ namespace DemoScene_ChunkService_DynamicChunk
 {
     public class Mesh对象池预加载器 : MonoBehaviour
     {
+        public 区块数据端 数据端;
         [ReadOnly] public int 预加载数量 = 200;
         public int 每帧加载数量 = 100;
         public bool isFinishWarmup = false;
@@ -16,8 +17,7 @@ namespace DemoScene_ChunkService_DynamicChunk
 
         private IEnumerator 预加载协程()
         {
-            int x = (区块全局设置.渲染半径 * 2 + 1);
-            预加载数量 = x * x * x;
+            int 预加载数量 = 常用数学计算.WarmUpMaxChunks(数据端.区块全局数据.渲染半径);
 
             for (int i = 0; i < 预加载数量; i++)
             {

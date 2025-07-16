@@ -16,14 +16,14 @@ public class Scene相机渲染测试器 : MonoBehaviour
             return;
 
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(playerCam);
-        Vector3 chunkSize = 区块全局设置.区块大小;
+        Vector3 chunkSize = 数据端.区块全局数据.区块大小;
 
         // 计算所有区块的包围盒（大长方体）
         Bounds combinedBounds = new Bounds();
         bool first = true;
         foreach (var kvp in 数据端.AllChunks.GetAllChunks())
         {
-            Vector3 center = 常用数学计算.LogicToWorld(kvp.Key) + chunkSize * 0.5f;
+            Vector3 center = 常用数学计算.LogicToWorld(数据端.区块全局数据, kvp.Key) + chunkSize * 0.5f;
             Bounds bounds = new Bounds(center, chunkSize);
 
             if (first)
@@ -49,7 +49,7 @@ public class Scene相机渲染测试器 : MonoBehaviour
             if (chunk.渲染数据.chunkMesh == null || chunk.渲染数据.chunkMaterial == null)
                 continue;
 
-            Vector3 center = 常用数学计算.LogicToWorld(kvp.Key) + chunkSize * 0.5f;
+            Vector3 center = 常用数学计算.LogicToWorld(数据端.区块全局数据, kvp.Key) + chunkSize * 0.5f;
             Bounds bounds = new Bounds(center, chunkSize);
 
             if (GeometryUtility.TestPlanesAABB(planes, bounds))

@@ -93,7 +93,7 @@ namespace DemoScene_ChunkService_DynamicChunk
         /// </summary>
         public void UpdateSortedCache()
         {
-            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(PlayerTransform.position);
+            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(数据端.区块全局数据, PlayerTransform.position);
 
             sortedChunkKeysCache = chunkMap.Keys
                 .OrderBy(pos => (pos - playerLogicPos).sqrMagnitude)
@@ -116,8 +116,8 @@ namespace DemoScene_ChunkService_DynamicChunk
             if (chunkMap.Count == 0)
                 return;
 
-            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(PlayerTransform.position);
-            int renderRange = 区块全局设置.渲染半径;
+            Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(数据端.区块全局数据, PlayerTransform.position);
+            int renderRange = 数据端.区块全局数据.渲染半径;
 
             List<Vector3Int> chunksToRemove = new();
 

@@ -57,8 +57,8 @@ namespace DevTools
             if (Input.GetKey(KeyCode.S)) direction -= transform.forward;
             if (Input.GetKey(KeyCode.A)) direction -= transform.right;
             if (Input.GetKey(KeyCode.D)) direction += transform.right;
-            if (Input.GetKey(KeyCode.E)) direction += transform.up;     // 上升
-            if (Input.GetKey(KeyCode.Q)) direction -= transform.up;     // 下降
+            if (Input.GetKey(KeyCode.E)) direction += Vector3.up;     // 上升
+            if (Input.GetKey(KeyCode.Q)) direction -= Vector3.up;     // 下降
 
             float finalSpeed = moveSpeed;
 

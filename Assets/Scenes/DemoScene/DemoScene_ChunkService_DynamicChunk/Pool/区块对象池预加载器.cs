@@ -16,10 +16,12 @@ namespace DemoScene_ChunkService_DynamicChunk
             StartCoroutine(预加载协程());
         } 
 
+
         private IEnumerator 预加载协程()
         {
-            int x = (区块全局设置.渲染半径 * 2 + 1);
-            预加载数量 = x * x * x;
+
+            int 预加载数量 = 常用数学计算.WarmUpMaxChunks(数据端.区块全局数据.渲染半径);
+            
 
             for (int i = 0; i < 预加载数量; i++)
             {
@@ -34,6 +36,10 @@ namespace DemoScene_ChunkService_DynamicChunk
             //Debug.Log($"[预加载器] 成功预热 {预加载数量} 个区块对象到池中");
             isFinishWarmup = true;
         }
+
+        
+
+
     }
 
 }

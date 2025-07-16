@@ -37,8 +37,8 @@ namespace DemoScene_ChunkService_DynamicChunk
                     if (chunk.渲染数据.chunkMesh == null || chunk.渲染数据.chunkMaterial == null)
                         continue;
 
-                    Vector3 chunkWorldPos = 常用数学计算.LogicToWorld(chunk.myLogicPos);
-                    Vector3 size = 区块全局设置.区块大小;
+                    Vector3 chunkWorldPos = 常用数学计算.LogicToWorld(数据端.区块全局数据, chunk.myLogicPos);
+                    Vector3 size = 数据端.区块全局数据.区块大小;
                     Bounds bounds = new Bounds(chunkWorldPos + size * 0.5f, size);
 
                     // 判断是否在摄像机视锥体内

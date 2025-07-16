@@ -4,11 +4,16 @@ using UnityEngine;
 
 namespace DemoScene_ChunkService_DynamicChunk
 {
-    public static class 区块全局设置
+    [CreateAssetMenu(fileName = "区块全局设置", menuName = "设置/区块全局设置")]
+    public class 区块全局设置 : ScriptableObject
     {
-        public static Vector3Int 区块大小 = new Vector3Int(16, 64, 16);
-        public static int 渲染半径 = 3; //即3*16=48米
-    } 
+        [Header("区块大小 (单位格)")]
+        public Vector3Int 区块大小 = new Vector3Int(16, 128, 16);
+
+        [Header("逻辑渲染半径")]
+        [Range(1, 20)]
+        public int 渲染半径 = 1;
+    }
 
     public class 区块渲染数据
     {
@@ -33,4 +38,4 @@ namespace DemoScene_ChunkService_DynamicChunk
         }
     }
 
-}
+} 

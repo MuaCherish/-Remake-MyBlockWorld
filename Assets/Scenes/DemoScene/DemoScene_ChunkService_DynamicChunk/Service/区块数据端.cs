@@ -9,6 +9,7 @@ namespace DemoScene_ChunkService_DynamicChunk
     {
         //数据
         public 优先级字典 AllChunks;
+        public 区块全局设置 区块全局数据;
 
         //引用
         public Material Mat_Chunk;

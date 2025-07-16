@@ -6,14 +6,25 @@ namespace DemoScene_ChunkService_DynamicChunk
 {
     public static class 常用数学计算
     {
-        public static Vector3 LogicToWorld(Vector3Int logicPos)
+        public static Vector3 LogicToWorld(区块全局设置 chunkSetting, Vector3Int logicPos)
         {
-            return new Vector3(logicPos.x * 区块全局设置.区块大小.x, logicPos.y * 区块全局设置.区块大小.y, logicPos.z * 区块全局设置.区块大小.z);
+            return new Vector3(logicPos.x * chunkSetting.区块大小.x, logicPos.y * chunkSetting.区块大小.y, logicPos.z * chunkSetting.区块大小.z);
         }
 
-        public static Vector3Int WorldToLogic(Vector3 relaPos)
+        public static Vector3Int WorldToLogic(区块全局设置 chunkSetting, Vector3 relaPos)
         {
-            return new Vector3Int((int)relaPos.x / 区块全局设置.区块大小.x, (int)relaPos.y / 区块全局设置.区块大小.y, (int)relaPos.z / 区块全局设置.区块大小.z);
+            return new Vector3Int((int)relaPos.x / chunkSetting.区块大小.x, (int)relaPos.y / chunkSetting.区块大小.y, (int)relaPos.z / chunkSetting.区块大小.z);
+        }
+
+        /// <summary>
+        /// 预热的最大区块数量计算公式
+        /// </summary>
+        /// <param name="n"></param>
+        /// <returns></returns>
+        public static int WarmUpMaxChunks(int n)
+        {
+            float result = 0.3333f * n * n * n + 24.8571f * n * n - 47.4762f * n + 28.6f;
+            return Mathf.CeilToInt(result);
         }
 
     }
