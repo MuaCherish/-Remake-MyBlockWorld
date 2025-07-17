@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace DemoScene_ChunkService_DynamicChunk
 {
-    public class 区块渲染端 : MonoBehaviour
+    public class 区块渲染端 : MC_Mono_Base
     {
         public 区块数据端 数据端;
 
@@ -11,7 +11,7 @@ namespace DemoScene_ChunkService_DynamicChunk
 
         private Plane[] 视锥体平面;
 
-        private void Update()
+        public override void Update_GameState_Playing()
         {
             if (数据端 == null || 数据端.AllChunks == null)
                 return;
@@ -19,8 +19,9 @@ namespace DemoScene_ChunkService_DynamicChunk
             // 计算摄像机视锥体平面
             视锥体平面 = GeometryUtility.CalculateFrustumPlanes(数据端.Player_Camera);
 
-            RenderChunk(); 
+            RenderChunk();
         }
+
 
         void RenderChunk()
         {
@@ -38,7 +39,7 @@ namespace DemoScene_ChunkService_DynamicChunk
                         continue;
 
                     Vector3 chunkWorldPos = 常用数学计算.LogicToWorld(数据端.区块全局数据, chunk.myLogicPos);
-                    Vector3 size = 数据端.区块全局数据.区块大小;
+                    Vector3 size = 数据端.区块全局数据.GetChunkSize();
                     Bounds bounds = new Bounds(chunkWorldPos + size * 0.5f, size);
 
                     // 判断是否在摄像机视锥体内

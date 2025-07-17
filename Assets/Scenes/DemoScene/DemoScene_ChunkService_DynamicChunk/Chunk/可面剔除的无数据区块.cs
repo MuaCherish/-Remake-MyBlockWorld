@@ -35,7 +35,7 @@ namespace DemoScene_ChunkService_DynamicChunk
 
 
             Vector3 worldPos = 常用数学计算.LogicToWorld(数据端.区块全局数据, myLogicPos);
-            Vector3 scale = 数据端.区块全局数据.区块大小;
+            Vector3 scale = 数据端.区块全局数据.GetChunkSize();
             渲染数据.matrix = Matrix4x4.TRS(worldPos, Quaternion.identity, scale);
 
             //计算完成后上传数据

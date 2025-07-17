@@ -14,19 +14,18 @@ namespace DemoScene_ChunkService_DynamicChunk
 
     }
 
-    public class 区块加载端 : MonoBehaviour
+    public class 区块加载端 : MC_Mono_Base
     {
         public 区块数据端 数据端;
         public 区块对象池预加载器 _区块对象池预加载器;
         public Mesh对象池预加载器 _Mesh对象池预加载器;
-        
 
         private void Start()
         {
             //不能使用Start动态加载，因为执行第一次的时候未预热导致函数会直接跳过
         }
 
-        private void Update()
+        public override void Update_GameState_Playing()
         {
             //提前返回-禁用Update
             if (!AllowUpdate)
@@ -74,11 +73,11 @@ namespace DemoScene_ChunkService_DynamicChunk
             Vector3 playerWorldPos = 数据端.Player_Transform.position;
             Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(数据端.区块全局数据, playerWorldPos);
 
-            int range = 数据端.区块全局数据.渲染半径;
+            int range = 数据端.区块全局数据.逻辑渲染半径;
 
             // 限定 Y 方向在上下 3 层（共 7 层）
-            int yMin = playerLogicPos.y - 3;
-            int yMax = playerLogicPos.y + 3;
+            int yMin = playerLogicPos.y - 2;
+            int yMax = playerLogicPos.y + 1;
 
             for (int x = -range; x <= range; x++)
             {

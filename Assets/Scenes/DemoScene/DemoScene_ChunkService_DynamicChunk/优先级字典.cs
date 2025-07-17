@@ -109,7 +109,8 @@ namespace DemoScene_ChunkService_DynamicChunk
         }
 
         /// <summary>
-        /// 清理所有距离玩家超过渲染半径的区块，自动卸载
+        /// 清理所有距离玩家超过渲染范围的区块（根据加载规则）
+        ///自动卸载
         /// </summary>
         public void RemoveChunksBeyondRange()
         {
@@ -117,15 +118,21 @@ namespace DemoScene_ChunkService_DynamicChunk
                 return;
 
             Vector3Int playerLogicPos = 常用数学计算.WorldToLogic(数据端.区块全局数据, PlayerTransform.position);
-            int renderRange = 数据端.区块全局数据.渲染半径;
+            int renderRange = 数据端.区块全局数据.逻辑渲染半径;
+
+            int yMin = playerLogicPos.y - 2;
+            int yMax = playerLogicPos.y + 1;
 
             List<Vector3Int> chunksToRemove = new();
 
-            // 遍历所有区块逻辑坐标，筛选超过范围的
             foreach (var kvp in chunkMap)
             {
                 Vector3Int pos = kvp.Key;
-                if (Vector3Int.Distance(pos, playerLogicPos) > renderRange)
+
+                // 水平方向超出渲染范围
+                if (Mathf.Abs(pos.x - playerLogicPos.x) > renderRange ||
+                    Mathf.Abs(pos.z - playerLogicPos.z) > renderRange ||
+                    pos.y < yMin || pos.y > yMax)
                 {
                     chunksToRemove.Add(pos);
                 }
@@ -136,6 +143,7 @@ namespace DemoScene_ChunkService_DynamicChunk
                 Remove(chunksToRemove);
             }
         }
+
 
         /// <summary>
         /// 获取区块

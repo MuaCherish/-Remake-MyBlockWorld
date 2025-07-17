@@ -16,7 +16,7 @@ public class Scene相机渲染测试器 : MonoBehaviour
             return;
 
         Plane[] planes = GeometryUtility.CalculateFrustumPlanes(playerCam);
-        Vector3 chunkSize = 数据端.区块全局数据.区块大小;
+        Vector3 chunkSize = 数据端.区块全局数据.GetChunkSize();
 
         // 计算所有区块的包围盒（大长方体）
         Bounds combinedBounds = new Bounds();

@@ -7,12 +7,14 @@ namespace DemoScene_ChunkService_DynamicChunk
     [CreateAssetMenu(fileName = "区块全局设置", menuName = "设置/区块全局设置")]
     public class 区块全局设置 : ScriptableObject
     {
-        [Header("区块大小 (单位格)")]
-        public Vector3Int 区块大小 = new Vector3Int(16, 128, 16);
-
-        [Header("逻辑渲染半径")]
-        [Range(1, 20)]
-        public int 渲染半径 = 1;
+        [Range(4, 16)] public int 区块宽度 = 16;
+        [Range(16, 128)] public int 区块高度 = 128;
+        [Range(2, 16)] public int 逻辑渲染半径 = 2;
+        
+        public Vector3Int GetChunkSize()
+        {
+            return new Vector3Int(区块宽度, 区块高度, 区块宽度);
+        }
     }
 
     public class 区块渲染数据

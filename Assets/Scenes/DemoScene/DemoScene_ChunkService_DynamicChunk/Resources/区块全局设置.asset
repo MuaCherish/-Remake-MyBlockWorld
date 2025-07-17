@@ -12,5 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3ff13c1fd114b44ca8a53735b2426e0, type: 3}
   m_Name: "\u533A\u5757\u5168\u5C40\u8BBE\u7F6E"
   m_EditorClassIdentifier: 
-  "\u533A\u5757\u5927\u5C0F": {x: 16, y: 128, z: 16}
-  "\u6E32\u67D3\u534A\u5F84": 12
+  "\u533A\u5757\u5BBD\u5EA6": 16
+  "\u533A\u5757\u9AD8\u5EA6": 128
+  "\u903B\u8F91\u6E32\u67D3\u534A\u5F84": 12

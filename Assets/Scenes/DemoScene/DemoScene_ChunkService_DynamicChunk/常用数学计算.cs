@@ -8,12 +8,12 @@ namespace DemoScene_ChunkService_DynamicChunk
     {
         public static Vector3 LogicToWorld(区块全局设置 chunkSetting, Vector3Int logicPos)
         {
-            return new Vector3(logicPos.x * chunkSetting.区块大小.x, logicPos.y * chunkSetting.区块大小.y, logicPos.z * chunkSetting.区块大小.z);
+            return new Vector3(logicPos.x * chunkSetting.区块宽度, logicPos.y * chunkSetting.区块高度, logicPos.z * chunkSetting.区块宽度);
         }
 
         public static Vector3Int WorldToLogic(区块全局设置 chunkSetting, Vector3 relaPos)
         {
-            return new Vector3Int((int)relaPos.x / chunkSetting.区块大小.x, (int)relaPos.y / chunkSetting.区块大小.y, (int)relaPos.z / chunkSetting.区块大小.z);
+            return new Vector3Int((int)relaPos.x / chunkSetting.区块宽度, (int)relaPos.y / chunkSetting.区块高度, (int)relaPos.z / chunkSetting.区块宽度);
         }
 
         /// <summary>

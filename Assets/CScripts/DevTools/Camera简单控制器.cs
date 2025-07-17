@@ -1,8 +1,9 @@
+using DemoScene_ChunkService_DynamicChunk;
 using UnityEngine;
 
 namespace DevTools
 {
-    public class Camera简单控制器 : MonoBehaviour
+    public class Camera简单控制器 : MC_Mono_Base
     {
         public float moveSpeed = 10f;          // 默认移动速度
         public float shiftMultiplier = 2f;     // Shift 加速倍率
@@ -24,7 +25,7 @@ namespace DevTools
             LockCursor(false);
         }
 
-        void Update()
+        public override void Update_GameState_Playing()
         {
             if (Input.GetMouseButtonDown(0)) LockCursor(true);
             if (Input.GetKeyDown(KeyCode.Escape)) LockCursor(false);
@@ -36,7 +37,6 @@ namespace DevTools
 
             MoveCamera();
         }
-
         void RotateCamera()
         {
             float mouseX = Input.GetAxis("Mouse X") * lookSpeed;
