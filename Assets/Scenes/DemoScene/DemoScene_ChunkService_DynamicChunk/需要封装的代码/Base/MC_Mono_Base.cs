@@ -63,16 +63,12 @@ namespace DemoScene_ChunkService_DynamicChunk
 
         // 可重写的 Update 虚函数接口
         public virtual void Update_GameState_Tick() { }
-
         public virtual void Update_GameState_Start() { }
         public virtual void Update_GameState_Start_Once() { }
-
         public virtual void Update_GameState_Loading() { }
         public virtual void Update_GameState_Loading_Once() { }
-
         public virtual void Update_GameState_Playing() { }
         public virtual void Update_GameState_Playing_Once() { }
-
         public virtual void Update_GameState_Pause() { }
         public virtual void Update_GameState_Pause_Once() { }
     }
