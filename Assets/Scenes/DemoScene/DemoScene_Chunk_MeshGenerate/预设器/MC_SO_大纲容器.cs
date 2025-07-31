@@ -8,6 +8,7 @@ namespace DemoScene_Chunk_MeshGenerate
     [Serializable]
     public class 大纲容器
     {
+        public string memo; //备注
         public string MyObjName;       // 创建的 GameObject 名字
         public string CsObjParent;     // 父路径，如 "服务端/Chunk"
         public string CsName;          // 脚本完整类型名，如 "DemoScene_Chunk_MeshGenerate.我的脚本"

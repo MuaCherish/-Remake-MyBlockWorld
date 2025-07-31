@@ -7,7 +7,7 @@ using UnityEngine.SceneManagement;
 namespace DemoScene_Chunk_MeshGenerate
 {
     [ExecuteInEditMode]
-    public class 项目大纲一键布置器 : MonoBehaviour
+    public class 项目大纲预设器 : MonoBehaviour
     {
         public MC_SO_大纲容器 预设;
 
@@ -27,6 +27,7 @@ namespace DemoScene_Chunk_MeshGenerate
             bool hasCamera = false, hasLight = false;
             foreach (var item in 预设.预设列表)
             {
+                if (item == null || string.IsNullOrWhiteSpace(item.MyObjName)) continue;
                 if (item.MyObjName == "Main Camera") hasCamera = true;
                 if (item.MyObjName == "Directional Light") hasLight = true;
             }
@@ -39,8 +40,13 @@ namespace DemoScene_Chunk_MeshGenerate
             // 3. 遍历并创建对象
             foreach (var item in 预设.预设列表)
             {
-                GameObject parent = 生成路径(item.CsObjParent);
+                if (item == null || string.IsNullOrWhiteSpace(item.MyObjName))
+                {
+                    Debug.LogWarning("跳过一个无效或未命名的预设项");
+                    continue;
+                }
 
+                GameObject parent = 生成路径(item.CsObjParent);
                 GameObject newObj;
 
                 if (item.MyObjName == "Main Camera")
@@ -52,6 +58,20 @@ namespace DemoScene_Chunk_MeshGenerate
                     newObj = ObjectFactory.CreateGameObject("Directional Light", typeof(Light));
                     Light light = newObj.GetComponent<Light>();
                     light.type = LightType.Directional;
+                }
+                else if (item.MyObjName == "EventSystem")
+                {
+                    newObj = ObjectFactory.CreateGameObject("EventSystem",
+                        typeof(UnityEngine.EventSystems.EventSystem),
+                        typeof(UnityEngine.EventSystems.StandaloneInputModule));
+                }
+                else if (item.MyObjName == "Canvas")
+                {
+                    newObj = ObjectFactory.CreateGameObject("Canvas",
+                        typeof(Canvas),
+                        typeof(UnityEngine.UI.CanvasScaler),
+                        typeof(UnityEngine.UI.GraphicRaycaster));
+                    newObj.GetComponent<Canvas>().renderMode = RenderMode.ScreenSpaceOverlay;
                 }
                 else
                 {
@@ -76,7 +96,7 @@ namespace DemoScene_Chunk_MeshGenerate
                 }
             }
 
-            Debug.Log("✅ 一键布置完成"); 
+            Debug.Log("✅ 一键布置完成");
         }
 
         private void 清除其他根对象()
