@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace DemoScene_Chunk_MeshGenerate
 {
+    /// <summary>
+    /// 区块初始化数据
+    /// </summary>
+    [System.Serializable]
     public class ChunkInitData
     {
         public Vector3Int chunkLogicPos;

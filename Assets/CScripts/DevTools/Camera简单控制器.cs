@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DevTools
 {
-    public class Camera简单控制器 : MC_Mono_Base
+    public class Camera简单控制器 : MonoBehaviour
     {
         public float moveSpeed = 10f;          // 默认移动速度
         public float shiftMultiplier = 2f;     // Shift 加速倍率
@@ -25,7 +25,12 @@ namespace DevTools
             LockCursor(false);
         }
 
-        public override void Update_GameState_Playing()
+        private void Update()
+        {
+            Update_GameState_Playing();
+        }
+
+        public void Update_GameState_Playing()
         {
             if (Input.GetMouseButtonDown(0)) LockCursor(true);
             if (Input.GetKeyDown(KeyCode.Escape)) LockCursor(false);

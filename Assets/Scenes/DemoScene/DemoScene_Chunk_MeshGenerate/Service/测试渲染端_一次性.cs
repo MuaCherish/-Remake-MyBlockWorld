@@ -25,14 +25,35 @@ namespace DemoScene_Chunk_MeshGenerate
         {
             AllChunks.Add(chunk);
 
-            Debug.Log($"区块坐标：{chunk.chunkMacroData.chunkLogicPos}" +
-                      $"区块尺寸：{chunk.chunkMacroData.chunkSize}" +
-                      $"体素数量：{chunk.chunkMicroData.Count}" +
-                      $"第一个体素类型：{chunk.chunkMicroData.GetVoxel(0).Type}" +
-                      $"verticesCount：{chunk.chunkRenderData.ChunkMesh.vertices.Length}"
-                      );
-
+            //直接渲染chunk
+            Test_RenderChunk(chunk);
         }
+
+        public void Test_RenderChunk(MC_Base_Chunk chunk)
+        {
+            if (chunk.chunkRenderData == null || !chunk.chunkRenderData.IsValid)
+            {
+                Debug.LogWarning("Chunk 渲染数据无效，跳过 GameObject 创建");
+                return;
+            }
+
+            // 创建新的 GameObject
+            GameObject chunkObj = new GameObject("Chunk_" + chunk.chunkMacroData.chunkLogicPos.ToString());
+
+            // 设置位置（可选，已经在 Matrix 里设置了）
+            chunkObj.transform.position = chunk.chunkRenderData.Matrix.GetColumn(3); // 取平移向量
+
+            // 添加 MeshFilter 和 MeshRenderer
+            var mf = chunkObj.AddComponent<MeshFilter>();
+            var mr = chunkObj.AddComponent<MeshRenderer>();
+
+            // 设置 Mesh 和材质
+            mf.sharedMesh = chunk.chunkRenderData.ChunkMesh;
+            mr.materials = chunk.chunkRenderData.ChunkMaterials;
+
+            // 可选：挂回 chunk 本身，便于后续更新（如 AddComponent<MonoChunkHolder>().Init(chunk);）
+        }
+
 
         public void RenderChunk()
         {
@@ -45,7 +66,7 @@ namespace DemoScene_Chunk_MeshGenerate
                     continue;
 
                 Vector3 size = chunk.chunkMacroData.chunkSize;
-                Vector3 chunkWorldPos = MC_Util_Math.LogicToWorld(chunk.chunkMacroData.chunkSize, chunk.chunkMacroData.chunkLogicPos);
+                Vector3 chunkWorldPos = MC_Util_Math.Macro_LogicToWorld(chunk.chunkMacroData.chunkSize, chunk.chunkMacroData.chunkLogicPos);
                 Bounds bounds = new Bounds(chunkWorldPos + size * 0.5f, size);
 
                 for (int i = 0; i < chunk.chunkRenderData.ChunkMesh.subMeshCount; i++)

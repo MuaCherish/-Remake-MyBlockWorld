@@ -1,61 +1,82 @@
-using DemoScene_ChunkService_DynamicChunk;
-using System.Collections;
+ï»¿using DemoScene_ChunkService_DynamicChunk;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace DemoScene_Chunk_MeshGenerate
 {
-    
-    public class Chunk_²âÊÔÇø¿é: MC_Base_Chunk
+    public class Chunk_æµ‹è¯•åŒºå— : MC_Base_Chunk
     {
-        public Chunk_²âÊÔÇø¿é(ChunkInitData initData, IChunkRenderer renderer) : base(initData, renderer) { }
+        public Chunk_æµ‹è¯•åŒºå—(ChunkInitData initData, IChunkRenderer renderer) : base(initData, renderer) { }
 
         public override void CalculateData()
         {
             for (int i = 0; i < chunkMicroData.Count; i++)
-                chunkMicroData.SetVoxel(i, type: 1);
+                chunkMicroData.SetVoxel(i, type: MC_Define_VoxelId.Stone);
+
+            //è®¾ç½®ä¸€ä¸ªæµ‹è¯•å…‰æº
+            int index = MC_Util_Math.Micro_RelaToLinear(chunkMacroData.chunkSize, new Vector3Int(0, 0, 0));
+            chunkMicroData.SetVoxel(index, lightDir: (int)MC_Define_Orientation.Enum_Orientation.Top, lightValue: 15);
+
         }
 
         public override void CalculateGrid()
         {
-            List<Vector3> vertices = new List<Vector3>();
+            int verticesIndexHead = 0;
 
-            //Triangles
-            int subMeshCount = 0; 
+            List<Vector3> vertices = new List<Vector3>();
+            List<Vector2> uvs = new List<Vector2>();
+            List<Color> colors = new List<Color>(); // â¬… é¡¶ç‚¹é¢œè‰²
+
+            int subMeshCount = 1;
             List<int>[] triangles = new List<int>[subMeshCount];
             for (int i = 0; i < subMeshCount; i++)
                 triangles[i] = new List<int>();
 
-            List<Vector2> uvs = new List<Vector2>();
-
-            // ±éÀúÃ¿Ò»¸öÔªËØ
             for (int thisLinearCoord = 0; thisLinearCoord < chunkMicroData.Count; thisLinearCoord++)
             {
-                // ±éÀúÃ¿Ò»¸ö·½Ïò
                 for (int face = 0; face < 6; face++)
                 {
-                    Orientation orientation = (Orientation)face;
-                    Vector3Int thisCoord = LinearToLogic(thisLinearCoord);
-                    Vector3Int targetCoord = thisCoord + MC_Static_Çø¿éÊı¾İ.Ãæ³¯·½Ïò[face];
+                    var orientation = (MC_Define_Orientation.Enum_Orientation)face;
+                    Vector3Int thisRelaCoord = MC_Util_Math.Micro_LinearToRela(chunkMacroData.chunkSize, thisLinearCoord);
+                    Vector3Int targetRelaCoord = thisRelaCoord + MC_Define_Orientation.Vec_Orientation[face];
 
-                    // Ìø¹ı»æÖÆ-µ±Ç°·½ÏòÉÏÓĞ¹ÌÌå
-                    if (isSolid(targetCoord))
+                    if (chunkMicroData.isSolid(chunkMacroData.chunkSize, targetRelaCoord))
                         continue;
 
-                    // »æÖÆÃæ
-                    MC_Static_Çø¿éÊı¾İ.GetQuad(orientation, out List<Vector3> quadVertices, out List<int> quadTriangles, out List<Vector2> quadUvs);
+                    MC_Define_ChunkRenderData.GetQuad(thisRelaCoord, verticesIndexHead, orientation, out MC_Define_QuadMeshBuffer quadMeshBuffer);
 
-                    vertices.AddRange(quadVertices);
-                    triangles[0].AddRange(quadTriangles);
-                    uvs.AddRange(quadUvs);
+                    vertices.AddRange(quadMeshBuffer.vertices);
+                    triangles[0].AddRange(quadMeshBuffer.triangles);
+                    uvs.AddRange(quadMeshBuffer.uvs);
+                    verticesIndexHead += 4;
+
+                    // Light
+                    for (int i = 0; i < 4; i++)
+                        colors.Add(MC_Define_ChunkRenderData.GetVoxelLight(chunkMicroData.GetVoxel(thisLinearCoord).Light[face]));
 
                 }
-                Vector3 chunkWorldPos = MC_Util_Math.LogicToWorld(chunkMacroData.chunkSize, chunkMacroData.chunkLogicPos);
-                chunkRenderData.Set(vertices.ToArray(), uvs.ToArray(), triangles, chunkWorldPos);
-
             }
 
+            Vector3 chunkWorldPos = MC_Util_Math.Macro_LogicToWorld(chunkMacroData.chunkSize, chunkMacroData.chunkLogicPos);
+            chunkRenderData.Set(vertices.ToArray(), colors.ToArray(), uvs.ToArray(), triangles, chunkWorldPos); // â¬… ä¼ å…¥é¢œè‰²
+        }
+
+
+        public override void PostProcess()
+        {
+            PostProcess_ApplyLightDimming();
+        }
+
+        //å…‰çº¿è¡°å‡å‡½æ•°
+        void PostProcess_ApplyLightDimming()
+        {
+            //å…ˆéå†ä¸€éVoxelæ•°æ®ï¼Œå¯»æ‰¾äº®åº¦
+        }
+
+        //å¯»æ‰¾å¤ªé˜³ç…§å°„é¢
+        void PostProcess_ProcessSunlitSurface()
+        {
+            //å¦‚æœç¢°åˆ°äº®åº¦æ›´é«˜çš„ï¼Œä¼šè¢«è¦†ç›–
         }
     }
 }

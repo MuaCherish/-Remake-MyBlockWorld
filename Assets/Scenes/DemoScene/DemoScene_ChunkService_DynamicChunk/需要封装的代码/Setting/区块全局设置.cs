@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DemoScene_ChunkService_DynamicChunk
 {
-    [CreateAssetMenu(fileName = "区块全局设置", menuName = "设置/区块全局设置")]
+    [CreateAssetMenu(fileName = "区块全局设置", menuName = "ScriptableObjects/区块全局设置")]
     public class 区块全局设置 : ScriptableObject
     {
         [Range(2, 16)] public int 区块宽度 = 16;

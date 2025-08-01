@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace DemoScene_ChunkService_DynamicChunk
 {
-    [CreateAssetMenu(menuName = "UI/面板配置表")]
+    [CreateAssetMenu(menuName = "ScriptableObjects/UI/面板配置表")]
     public class UI配置表 : ScriptableObject
     {
         [System.Serializable]

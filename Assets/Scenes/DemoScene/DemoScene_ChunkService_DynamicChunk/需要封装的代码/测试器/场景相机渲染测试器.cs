@@ -2,6 +2,8 @@
 using UnityEngine;
 using UnityEditor;
 
+///问题：
+///allchunk使用的不是MC_Base_Chunk
 namespace DemoScene_ChunkService_DynamicChunk
 {
     public enum 渲染模式

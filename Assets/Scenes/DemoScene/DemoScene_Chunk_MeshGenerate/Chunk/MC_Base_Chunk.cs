@@ -19,22 +19,17 @@ namespace DemoScene_Chunk_MeshGenerate
         /// </summary>
         public MC_Base_Chunk(ChunkInitData initData, IChunkRenderer renderer)
         {
-            //MacroData
-            chunkMacroData.chunkLogicPos = initData.chunkLogicPos;
-            chunkMacroData.chunkSize = initData.chunkSize;
+            
+            chunkMacroData.chunkLogicPos = initData.chunkLogicPos;//MacroData
+            chunkMacroData.chunkSize = initData.chunkSize;//MacroData
+            chunkMicroData.Initialize(chunkMacroData.chunkSize.x * chunkMacroData.chunkSize.y * chunkMacroData.chunkSize.z);//MicroData
+            chunkRenderData.SetMaterials(initData.chunkMaterials);//RendererData
+            chunkRenderer = renderer;//Renderer
 
-            //MicroData
-            chunkMicroData.Initialize(chunkMacroData.chunkSize.x * chunkMacroData.chunkSize.y * chunkMacroData.chunkSize.z);
-
-            //RendererData
-            chunkRenderData.SetMaterials(initData.chunkMaterials);
-
-            //Renderer
-            chunkRenderer = renderer;
-
-            CalculateData();
-            CalculateGrid();
-            PushData();
+            CalculateData(); //计算Voxel数据
+            CalculateGrid(); //计算网格数据
+            PostProcess();   //后处理-亮度衰减
+            PushData();      //提交数据
         }
 
         /// <summary>
@@ -46,6 +41,11 @@ namespace DemoScene_Chunk_MeshGenerate
         /// 虚方法：如何计算网格
         /// </summary>
         public virtual void CalculateGrid() { }
+
+        /// <summary>
+        /// 数据后处理
+        /// </summary>
+        public virtual void PostProcess() { }
 
         /// <summary>
         /// 公开方法：上传数据
@@ -70,52 +70,5 @@ namespace DemoScene_Chunk_MeshGenerate
             chunkRenderer.PullData(this);
         }
 
-        /// <summary>
-        ///  工具方法：三维变一维
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
-        public int LogicToLinear(Vector3Int coord)
-        {
-            if (coord.x < 0 || coord.x >= chunkMacroData.chunkSize.x ||
-                coord.y < 0 || coord.y >= chunkMacroData.chunkSize.y ||
-                coord.z < 0 || coord.z >= chunkMacroData.chunkSize.z)
-            {
-                Debug.LogError($"索引越界: ({coord.x},{coord.y},{coord.z}) 超出范围 {chunkMacroData.chunkSize}");
-                return -1;
-            }
-            return coord.x + chunkMacroData.chunkSize.x * (coord.y + chunkMacroData.chunkSize.y * coord.z);
-        }
-
-        /// <summary>
-        /// 工具方法：一维变三维
-        /// </summary>
-        /// <param name="index"></param>
-        /// <returns></returns>
-        public Vector3Int LinearToLogic(int index)
-        {
-            if (index < 0 || index >= chunkMacroData.chunkSize.x * chunkMacroData.chunkSize.y * chunkMacroData.chunkSize.z)
-            {
-                Debug.LogError($"索引越界: index={index} 超出范围 {chunkMacroData.chunkSize.x * chunkMacroData.chunkSize.y * chunkMacroData.chunkSize.z}");
-                return Vector3Int.zero;
-            }
-            int x = index % chunkMacroData.chunkSize.x;
-            int y = (index / chunkMacroData.chunkSize.x) % chunkMacroData.chunkSize.y;
-            int z = index / (chunkMacroData.chunkSize.x * chunkMacroData.chunkSize.y);
-            return new Vector3Int(x, y, z);
-        }
-
-        /// <summary>
-        /// 工具方法：判断是否是固体
-        /// </summary>
-        /// <param name="coord"></param>
-        /// <returns></returns>
-        public bool isSolid(Vector3Int coord)
-        {
-            if (chunkMicroData.GetVoxel(LogicToLinear(coord)).Type == 1)
-                return true;
-            else
-                return false;
-        }
     }
 }

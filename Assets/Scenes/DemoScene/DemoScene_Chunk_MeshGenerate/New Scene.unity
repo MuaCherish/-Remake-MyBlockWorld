@@ -396,6 +396,7 @@ GameObject:
   - component: {fileID: 299172236}
   - component: {fileID: 299172238}
   - component: {fileID: 299172237}
+  - component: {fileID: 299172239}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: Untagged
@@ -412,7 +413,7 @@ Transform:
   m_GameObject: {fileID: 299172235}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: -3}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -477,6 +478,23 @@ Camera:
   m_OcclusionCulling: 1
   m_StereoConvergence: 10
   m_StereoSeparation: 0.022
+--- !u!114 &299172239
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 299172235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e34a9123432b85642bafe0664ea3bf4d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveSpeed: 3
+  shiftMultiplier: 1
+  ctrlMultiplier: 0.3
+  lookSpeed: 2
+  upDownSpeed: 3
 --- !u!1 &505966572
 GameObject:
   m_ObjectHideFlags: 0
@@ -521,10 +539,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3b63df29322315d48a44a9a0c9373143, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LogicPos: {x: 0, y: 0, z: 0}
-  Size: {x: 0, y: 0, z: 0}
-  Mat_Chunk:
-  - {fileID: 2100000, guid: 7c73f8bc82970064999a255a414dbdc6, type: 2}
+  initData:
+    chunkLogicPos: {x: 0, y: 0, z: 0}
+    chunkSize: {x: 16, y: 1, z: 16}
+    chunkMaterials:
+    - {fileID: 2100000, guid: 0ad6242c48cb9e243964aabe9c061d90, type: 2}
   "\u6E32\u67D3\u7AEF": {fileID: 1015994110}
 --- !u!1 &1015994108
 GameObject:
@@ -571,6 +590,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 299172238}
+  count: 0
 --- !u!1 &1077584259
 GameObject:
   m_ObjectHideFlags: 0
