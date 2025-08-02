@@ -12,10 +12,9 @@ namespace DemoScene_Chunk_MeshGenerate
 
         void Start()
         {
-            Chunk_测试区块 chunk = new Chunk_测试区块(initData, 渲染端);
+            Chunk_测试区块 _chunk = new Chunk_测试区块(initData, 渲染端);
         }
 
- 
     }
 }
 

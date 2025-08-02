@@ -9,5 +9,6 @@ namespace DemoScene_Chunk_MeshGenerate
         public static readonly byte BedRock = 0;
         public static readonly byte Stone = 1;
         public static readonly byte Air = 6;
+        public static readonly byte Water = 8;
     }
 }

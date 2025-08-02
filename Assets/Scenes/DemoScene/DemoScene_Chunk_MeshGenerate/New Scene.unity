@@ -491,7 +491,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 3
-  shiftMultiplier: 1
+  shiftMultiplier: 1.5
   ctrlMultiplier: 0.3
   lookSpeed: 2
   upDownSpeed: 3
@@ -541,7 +541,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   initData:
     chunkLogicPos: {x: 0, y: 0, z: 0}
-    chunkSize: {x: 16, y: 1, z: 16}
+    chunkSize: {x: 32, y: 1, z: 32}
     chunkMaterials:
     - {fileID: 2100000, guid: 0ad6242c48cb9e243964aabe9c061d90, type: 2}
   "\u6E32\u67D3\u7AEF": {fileID: 1015994110}
@@ -590,7 +590,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cam: {fileID: 299172238}
-  count: 0
 --- !u!1 &1077584259
 GameObject:
   m_ObjectHideFlags: 0

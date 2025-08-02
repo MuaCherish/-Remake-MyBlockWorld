@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using System.Diagnostics; // 引入 Stopwatch 计时器
 
 namespace DemoScene_Chunk_MeshGenerate
 {
@@ -8,7 +9,6 @@ namespace DemoScene_Chunk_MeshGenerate
     /// </summary>
     public abstract class MC_Base_Chunk
     {
-
         public ChunkMacroData chunkMacroData = new ChunkMacroData();    //区块宏观数据
         public ChunkMicroData chunkMicroData = new ChunkMicroData();    //区块微观数据
         public ChunkRenderData chunkRenderData = new ChunkRenderData(); //区块渲染数据
@@ -19,28 +19,41 @@ namespace DemoScene_Chunk_MeshGenerate
         /// </summary>
         public MC_Base_Chunk(ChunkInitData initData, IChunkRenderer renderer)
         {
-            
-            chunkMacroData.chunkLogicPos = initData.chunkLogicPos;//MacroData
-            chunkMacroData.chunkSize = initData.chunkSize;//MacroData
-            chunkMicroData.Initialize(chunkMacroData.chunkSize.x * chunkMacroData.chunkSize.y * chunkMacroData.chunkSize.z);//MicroData
-            chunkRenderData.SetMaterials(initData.chunkMaterials);//RendererData
-            chunkRenderer = renderer;//Renderer
 
-            CalculateData(); //计算Voxel数据
-            CalculateGrid(); //计算网格数据
-            PostProcess();   //后处理-亮度衰减
-            PushData();      //提交数据
+            // 异常判断
+            if (initData.chunkSize.x == 0 || initData.chunkSize.y == 0 || initData.chunkSize.z == 0)
+            {
+                UnityEngine.Debug.LogWarning($"区块未正确初始化。ChunkSize: {initData.chunkSize}");
+                return;
+            }
+            if (initData.chunkMaterials.Length == 0)
+            {
+                UnityEngine.Debug.LogWarning($"区块未正确初始化。chunkMaterials.Length: {initData.chunkMaterials.Length}");
+                return;
+            }
+
+            chunkMacroData.chunkLogicPos = initData.chunkLogicPos;
+            chunkMacroData.chunkSize = initData.chunkSize;
+            chunkMicroData.Initialize(chunkMacroData.chunkSize.x * chunkMacroData.chunkSize.y * chunkMacroData.chunkSize.z);
+            chunkRenderData.SetMaterials(initData.chunkMaterials);
+            chunkRenderer = renderer;
+
+            CalculateVoxelData(); // 计算Voxel数据
+            PostProcess();   // 亮度衰减等后处理
+            CalculateGridData(); // 计算网格数据
+            PushData();      // 推送渲染数据
+
         }
 
         /// <summary>
         /// 虚方法：计算区块微观数据
         /// </summary>
-        public virtual void CalculateData() { }
+        public virtual void CalculateVoxelData() { }
 
         /// <summary>
         /// 虚方法：如何计算网格
         /// </summary>
-        public virtual void CalculateGrid() { }
+        public virtual void CalculateGridData() { }
 
         /// <summary>
         /// 数据后处理
@@ -48,27 +61,24 @@ namespace DemoScene_Chunk_MeshGenerate
         public virtual void PostProcess() { }
 
         /// <summary>
-        /// 公开方法：上传数据
-        /// 用于Chunk计算完毕回调给渲染器
+        /// 上传数据用于渲染
         /// </summary>
         public void PushData()
         {
             if (chunkRenderer == null)
             {
-                Debug.LogError("Service_chunkRenderer 未赋值，无法调用 PushData()");
+                UnityEngine.Debug.LogError("Service_chunkRenderer 未赋值，无法调用 PushData()");
                 return;
             }
 
             if (!chunkRenderData.IsValid)
             {
-                Debug.LogError("渲染数据未准备完毕，无法调用 PushData()");
-                Debug.LogError($"[渲染参数]  Mesh：{chunkRenderData.ChunkMesh}， 材质：{chunkRenderData.ChunkMaterials}， 材质Count：{chunkRenderData.ChunkMaterials.Length}");
+                UnityEngine.Debug.LogError("渲染数据未准备完毕，无法调用 PushData()");
+                UnityEngine.Debug.LogError($"[渲染参数]  Mesh：{chunkRenderData.ChunkMesh}， 材质：{chunkRenderData.ChunkMaterials}， 材质Count：{chunkRenderData.ChunkMaterials.Length}");
                 return;
             }
 
-            // 传入当前区块实例
             chunkRenderer.PullData(this);
         }
-
     }
 }

@@ -44,7 +44,7 @@ namespace DemoScene_Chunk_MeshGenerate
         {
             if (!IsValidIndex(index))
             {
-                Debug.LogWarning($"SetVoxel index out of range: {index}");
+                //Debug.LogWarning($"SetVoxel index out of range: {index}");
                 return;
             }
 
@@ -78,7 +78,7 @@ namespace DemoScene_Chunk_MeshGenerate
             if (IsValidIndex(index))
                 return voxelMap[index];
 
-            Debug.LogWarning($"GetVoxel index out of range: {index}");
+            //Debug.LogWarning($"GetVoxel index out of range: {index}");
             return MC_Define_VoxelState.Default;
         }
 
@@ -102,22 +102,47 @@ namespace DemoScene_Chunk_MeshGenerate
 
         /// <summary>
         /// 工具方法：判断是否是固体
-        /// True:不绘制
-        /// False:绘制
+        /// </summary>
+        public bool isSolid(Vector3Int chunkSize, Vector3Int thisRelaPos)
+        {
+            //提前返回-数组越界一律绘制（后面可以尝试检查目标区块的相应位置）
+            if (IsOutOfIndex(chunkSize, thisRelaPos))
+                return false;
+
+            //是空气则绘制
+            if (GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, thisRelaPos)).Type == MC_Define_VoxelId.Air ||
+                GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, thisRelaPos)).Type == MC_Define_VoxelId.Water
+                )
+                return false;
+            else
+                return true;
+        }
+
+
+        /// <summary>
+        /// 工具方法：判断是否需要绘制
+        /// True:绘制
+        /// False:不绘制
         /// </summary>
         /// <param name="coord"></param>
         /// <returns></returns>
-        public bool isSolid(Vector3Int chunkSize, Vector3Int coord)
+        public bool isNeedDrawQuad(Vector3Int chunkSize, Vector3Int thisRelaCoord, Vector3Int targetRelaCoord)
         {
-            //提前返回-数组越界一律绘制（后面可以尝试检查目标区块的相应位置）
-            if (IsOutOfIndex(chunkSize, coord))
-                return false;
 
-            if (GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, coord)).Type != MC_Define_VoxelId.Air)
+            byte thisType = GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, thisRelaCoord)).Type;
+            byte targetType = GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, targetRelaCoord)).Type;
+
+            //提前绘制-下标出界
+            if (thisType != MC_Define_VoxelId.Air && IsOutOfIndex(chunkSize, targetRelaCoord))
                 return true;
-            else
-                return false;
+
+            //提前绘制-如果是透明方块
+            if (isSolid(chunkSize, thisRelaCoord) && !isSolid(chunkSize, targetRelaCoord))
+                return true;
+
+            return false;
         }
+
     }
 
 

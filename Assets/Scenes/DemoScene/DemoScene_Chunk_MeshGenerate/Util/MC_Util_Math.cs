@@ -32,7 +32,7 @@ namespace DemoScene_Chunk_MeshGenerate
                 coord.y < 0 || coord.y >= chunkSize.y ||
                 coord.z < 0 || coord.z >= chunkSize.z)
             {
-                Debug.LogError($"索引越界: ({coord.x},{coord.y},{coord.z}) 超出范围 {chunkSize}");
+                //Debug.LogError($"索引越界: ({coord.x},{coord.y},{coord.z}) 超出范围 {chunkSize}");
                 return -1;
             }
             return coord.x + chunkSize.x * (coord.y + chunkSize.y * coord.z);
