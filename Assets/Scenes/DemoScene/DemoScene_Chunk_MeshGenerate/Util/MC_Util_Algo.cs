@@ -9,9 +9,9 @@ namespace DemoScene_Chunk_MeshGenerate
         /// <summary>
         /// ÃæµÄBFSËã·¨
         /// </summary>
-        public static void QuadBFS(Vector3Int thisRelaPos, MC_Define_Orientation.Enum_Orientation thisOrientation, out Dictionary<Vector3Int, MC_Define_Orientation.Enum_Orientation> result)
+        public static void QuadBFS(Vector3Int thisRelaPos, MC_Define_Config_Orientation.Enum_Orientation thisOrientation, out Dictionary<Vector3Int, MC_Define_Config_Orientation.Enum_Orientation> result)
         {
-            result = new Dictionary<Vector3Int, MC_Define_Orientation.Enum_Orientation> ();
+            result = new Dictionary<Vector3Int, MC_Define_Config_Orientation.Enum_Orientation> ();
         }
     }
 

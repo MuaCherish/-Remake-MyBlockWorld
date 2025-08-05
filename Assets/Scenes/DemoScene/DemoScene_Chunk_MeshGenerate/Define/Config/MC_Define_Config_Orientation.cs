@@ -6,7 +6,7 @@ namespace DemoScene_Chunk_MeshGenerate
     /// <summary>
     /// 区块方向工具类
     /// </summary>
-    public static class MC_Define_Orientation
+    public static class MC_Define_Config_Orientation
     {
         /// <summary>
         /// 区块的六个朝向（枚举）

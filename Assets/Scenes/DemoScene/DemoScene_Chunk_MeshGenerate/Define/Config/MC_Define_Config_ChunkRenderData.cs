@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace DemoScene_Chunk_MeshGenerate
 {
-    public static class MC_Define_ChunkRenderData
+    public static class MC_Define_Config_ChunkRenderData
     {
 
         public static readonly Vector3[] ∂•µ„–Ú¡– = new Vector3[8]
@@ -40,9 +40,9 @@ namespace DemoScene_Chunk_MeshGenerate
         /// <param name="headIndex"></param>
         /// <param name="orientation"></param>
         /// <param name="quadMeshBuffer"></param>
-        public static void GetQuad(Vector3Int rootRelaPos,int headIndex, MC_Define_Orientation.Enum_Orientation orientation, out MC_Define_QuadMeshBuffer quadMeshBuffer)
+        public static void GetQuad(Vector3Int rootRelaPos,int headIndex, MC_Define_Config_Orientation.Enum_Orientation orientation, out MC_Define_Class_QuadMeshBuffer quadMeshBuffer)
         {
-            quadMeshBuffer = new MC_Define_QuadMeshBuffer();
+            quadMeshBuffer = new MC_Define_Class_QuadMeshBuffer();
 
             int faceIndex = (int)orientation;
 

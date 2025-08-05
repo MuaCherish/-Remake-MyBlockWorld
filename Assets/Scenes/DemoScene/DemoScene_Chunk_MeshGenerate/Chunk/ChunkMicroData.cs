@@ -11,7 +11,7 @@ namespace DemoScene_Chunk_MeshGenerate
     public class ChunkMicroData
     {
         [SerializeField]
-        private MC_Define_VoxelState[] voxelMap;
+        private MC_Define_Class_VoxelState[] voxelMap;
 
         /// <summary>
         /// 当前区块的体素数量
@@ -24,10 +24,10 @@ namespace DemoScene_Chunk_MeshGenerate
         /// <param name="size">体素总数量（一般为 区块宽×高×深）</param>
         public void Initialize(int size)
         {
-            voxelMap = new MC_Define_VoxelState[size];
+            voxelMap = new MC_Define_Class_VoxelState[size];
             for (int i = 0; i < size; i++)
             {
-                voxelMap[i] = MC_Define_VoxelState.Default; // 使用结构体的默认值定义
+                voxelMap[i] = MC_Define_Class_VoxelState.Default; // 使用结构体的默认值定义
             }
         }
 
@@ -37,7 +37,7 @@ namespace DemoScene_Chunk_MeshGenerate
         public void SetVoxel(
             int index,
             byte? type = null,
-            MC_Define_Orientation.Enum_Orientation? orientation = null,
+            MC_Define_Config_Orientation.Enum_Orientation? orientation = null,
             byte[] lightArray = null,
             int? lightDir = null,
             byte? lightValue = null)
@@ -48,7 +48,7 @@ namespace DemoScene_Chunk_MeshGenerate
                 return;
             }
 
-            ref MC_Define_VoxelState v = ref voxelMap[index];
+            ref MC_Define_Class_VoxelState v = ref voxelMap[index];
 
             if (type.HasValue)
                 v.Type = type.Value;
@@ -73,13 +73,13 @@ namespace DemoScene_Chunk_MeshGenerate
         /// <summary>
         /// 获取指定体素
         /// </summary>
-        public MC_Define_VoxelState GetVoxel(int index)
+        public MC_Define_Class_VoxelState GetVoxel(int index)
         {
             if (IsValidIndex(index))
                 return voxelMap[index];
 
             //Debug.LogWarning($"GetVoxel index out of range: {index}");
-            return MC_Define_VoxelState.Default;
+            return MC_Define_Class_VoxelState.Default;
         }
 
         /// <summary>
@@ -110,8 +110,8 @@ namespace DemoScene_Chunk_MeshGenerate
                 return false;
 
             //是空气则绘制
-            if (GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, thisRelaPos)).Type == MC_Define_VoxelId.Air ||
-                GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, thisRelaPos)).Type == MC_Define_VoxelId.Water
+            if (GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, thisRelaPos)).Type == MC_Define_Config_VoxelId.Air ||
+                GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, thisRelaPos)).Type == MC_Define_Config_VoxelId.Water
                 )
                 return false;
             else
@@ -133,7 +133,7 @@ namespace DemoScene_Chunk_MeshGenerate
             byte targetType = GetVoxel(MC_Util_Math.Micro_RelaToLinear(chunkSize, targetRelaCoord)).Type;
 
             //提前绘制-下标出界
-            if (thisType != MC_Define_VoxelId.Air && IsOutOfIndex(chunkSize, targetRelaCoord))
+            if (thisType != MC_Define_Config_VoxelId.Air && IsOutOfIndex(chunkSize, targetRelaCoord))
                 return true;
 
             //提前绘制-如果是透明方块

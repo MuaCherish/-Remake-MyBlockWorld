@@ -8,9 +8,9 @@ namespace DemoScene_Chunk_MeshGenerate
     /// 所有方块类型的配置数据库（ScriptableObject）
     /// </summary>
     [CreateAssetMenu(fileName = "VoxelDatabase", menuName = "ScriptableObjects/Voxel Database")]
-    public class VoxelDatabase : ScriptableObject
+    public class MC_Define_SO_VoxelDatabase : ScriptableObject
     {
-        public List<MC_Define_VoxelDefinition> voxelList = new List<MC_Define_VoxelDefinition>();
+        public List<MC_Define_Class_VoxelDefinition> voxelList = new List<MC_Define_Class_VoxelDefinition>();
     }
 
 }

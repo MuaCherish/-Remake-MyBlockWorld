@@ -13,7 +13,7 @@ namespace DemoScene_Chunk_MeshGenerate
 
             for (int i = 0; i < chunkMicroData.Count; i++)
             {
-                chunkMicroData.SetVoxel(i, type: MC_Define_VoxelId.Stone);
+                chunkMicroData.SetVoxel(i, type: MC_Define_Config_VoxelId.Stone);
             }
 
         }
@@ -35,15 +35,15 @@ namespace DemoScene_Chunk_MeshGenerate
             {
                 for (int face = 0; face < 6; face++)
                 {
-                    var orientation = (MC_Define_Orientation.Enum_Orientation)face;
+                    var orientation = (MC_Define_Config_Orientation.Enum_Orientation)face;
                     Vector3Int thisRelaCoord = MC_Util_Math.Micro_LinearToRela(chunkMacroData.chunkSize, thisLinearCoord);
-                    Vector3Int targetRelaCoord = thisRelaCoord + MC_Define_Orientation.Vec_Orientation[face];
+                    Vector3Int targetRelaCoord = thisRelaCoord + MC_Define_Config_Orientation.Vec_Orientation[face];
 
                     
                     if (!chunkMicroData.isNeedDrawQuad(chunkMacroData.chunkSize, thisRelaCoord, targetRelaCoord))
                         continue;
 
-                    MC_Define_ChunkRenderData.GetQuad(thisRelaCoord, verticesIndexHead, orientation, out MC_Define_QuadMeshBuffer quadMeshBuffer);
+                    MC_Define_Config_ChunkRenderData.GetQuad(thisRelaCoord, verticesIndexHead, orientation, out MC_Define_Class_QuadMeshBuffer quadMeshBuffer);
 
                     vertices.AddRange(quadMeshBuffer.vertices);
                     triangles[0].AddRange(quadMeshBuffer.triangles);
@@ -54,7 +54,7 @@ namespace DemoScene_Chunk_MeshGenerate
                     //byte lightness = (byte)Random.Range(0, 15);
                     byte lightness = chunkMicroData.GetVoxel(thisLinearCoord).Light[face];
                     for (int i = 0; i < 4; i++)
-                        colors.Add(MC_Define_ChunkRenderData.GetVoxelLight(lightness));
+                        colors.Add(MC_Define_Config_ChunkRenderData.GetVoxelLight(lightness));
 
                 }
             }
@@ -88,7 +88,7 @@ namespace DemoScene_Chunk_MeshGenerate
                         int index = MC_Util_Math.Micro_RelaToLinear(chunkSize, new Vector3Int(x, 0, z));
                         chunkMicroData.SetVoxel(
                             index,
-                            lightDir: (int)MC_Define_Orientation.Enum_Orientation.Top,
+                            lightDir: (int)MC_Define_Config_Orientation.Enum_Orientation.Top,
                             lightValue: (byte)light
                         );
                     }
