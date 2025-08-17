@@ -72,4 +72,5 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
 # Ignore TerraCraft Font folder
-Assets/_0_TerraCraft_/1_Resources/Static/Font/
+Assets/0_TerraCraft/1_Resources/Static/Font/
+Assets/Font/
